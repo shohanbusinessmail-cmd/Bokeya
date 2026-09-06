@@ -1,0 +1,10 @@
+name: CI Probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "arena/01a0776e-bokeya" ]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "probe ok"; java -version; echo "ANDROID_HOME=$ANDROID_HOME"; ls $ANDROID_HOME/platforms 2>/dev/null | tail -5
