@@ -6,26 +6,50 @@ on:
 permissions:
   contents: read
   issues: write
-  checks: write
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Env info
+      - name: Resolve latest versions
         run: |
-          { echo "java:"; java -version 2>&1; echo "ANDROID_HOME=$ANDROID_HOME";
-            ls $ANDROID_HOME/platforms 2>/dev/null | tail -6;
-            ls $ANDROID_HOME/build-tools 2>/dev/null | tail -6;
-            echo "gradle: $(gradle --version 2>/dev/null | grep Gradle | head -1)"; } > /tmp/report.txt
-          cat /tmp/report.txt
-      - name: Artifact channel
-        uses: actions/upload-artifact@v4
-        with:
-          name: probe-report
-          path: /tmp/report.txt
-      - name: Issue-comment channel
+          set +e
+          out=/tmp/v.txt; : > $out
+          g() { # name url
+            v=$(curl -s "$2" | grep -o '<latest>[^<]*</latest>' | head -1 | sed 's/<[^>]*>//g')
+            r=$(curl -s "$2" | grep -o '<release>[^<]*</release>' | head -1 | sed 's/<[^>]*>//g')
+            all=$(curl -s "$2" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -v -E 'alpha|beta|rc|dev|-M|SNAPSHOT' | tail -3 | tr '\n' ' ')
+            printf '%-46s latest=%-16s release=%-16s stable_tail=%s\n' "$1" "$v" "$r" "$all" >> $out
+          }
+          G=https://dl.google.com/dl/android/maven2
+          M=https://repo1.maven.org/maven2
+          g "AGP com.android.tools.build:gradle" "$G/com/android/tools/build/gradle/maven-metadata.xml"
+          g "kotlin-gradle-plugin" "$M/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml"
+          g "ksp symbol-processing-gradle-plugin" "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml"
+          g "androidx.compose:compose-bom" "$G/androidx/compose/compose-bom/maven-metadata.xml"
+          g "androidx.room:room-runtime" "$G/androidx/room/room-runtime/maven-metadata.xml"
+          g "androidx.navigation:navigation-compose" "$G/androidx/navigation/navigation-compose/maven-metadata.xml"
+          g "androidx.work:work-runtime-ktx" "$G/androidx/work/work-runtime-ktx/maven-metadata.xml"
+          g "androidx.datastore:datastore-preferences" "$G/androidx/datastore/datastore-preferences/maven-metadata.xml"
+          g "androidx.biometric:biometric" "$G/androidx/biometric/biometric/maven-metadata.xml"
+          g "androidx.lifecycle:lifecycle-viewmodel-compose" "$G/androidx/lifecycle/lifecycle-viewmodel-compose/maven-metadata.xml"
+          g "androidx.activity:activity-compose" "$G/androidx/activity/activity-compose/maven-metadata.xml"
+          g "androidx.core:core-ktx" "$G/androidx/core/core-ktx/maven-metadata.xml"
+          g "androidx.core:core-splashscreen" "$G/androidx/core/core-splashscreen/maven-metadata.xml"
+          g "kotlinx-coroutines-android" "$M/org/jetbrains/kotlinx/kotlinx-coroutines-android/maven-metadata.xml"
+          g "kotlinx-serialization-json" "$M/org/jetbrains/kotlinx/kotlinx-serialization-json/maven-metadata.xml"
+          g "androidx.test.ext:junit" "$G/androidx/test/ext/junit/maven-metadata.xml"
+          g "robolectric" "$M/org/robolectric/robolectric/maven-metadata.xml"
+          g "turbine" "$M/app/cash/turbine/turbine/maven-metadata.xml"
+          g "gradle-dists" "n/a"
+          echo "== gradle installed: $(gradle --version | grep Gradle | head -1)" >> $out
+          echo "== sdk platforms: $(ls $ANDROID_HOME/platforms | tr '\n' ' ')" >> $out
+          echo "== build-tools: $(ls $ANDROID_HOME/build-tools | tr '\n' ' ')" >> $out
+          echo "== cmdline-tools: $(ls $ANDROID_HOME/cmdline-tools | tr '\n' ' ')" >> $out
+          cat $out
+      - name: Report
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BODY=$(printf '```\n%s\n```' "$(cat /tmp/report.txt)")
-          gh api repos/${{ github.repository }}/issues -f title="CI probe report" -f body="$BODY" --jq '.number' || echo "ISSUE_CREATE_FAILED"
+          BODY=$(printf 'PROBE run %s\n```\n%s\n```' "${{ github.run_id }}" "$(cat /tmp/v.txt)")
+          gh api repos/${{ github.repository }}/issues/1/comments -f body="$BODY" --jq '.id'
