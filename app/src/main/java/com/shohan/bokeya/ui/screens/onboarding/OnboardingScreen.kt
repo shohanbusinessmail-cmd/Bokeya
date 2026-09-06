@@ -19,9 +19,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.NotificationsActive
-import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -49,7 +49,7 @@ private data class OnboardPage(
 )
 
 private val PAGES = listOf(
-    OnboardPage(Icons.Outlined.ReceiptLong, R.string.onboard_1_title, R.string.onboard_1_sub),
+    OnboardPage(Icons.AutoMirrored.Outlined.ReceiptLong, R.string.onboard_1_title, R.string.onboard_1_sub),
     OnboardPage(Icons.Outlined.NotificationsActive, R.string.onboard_2_title, R.string.onboard_2_sub),
     OnboardPage(Icons.AutoMirrored.Outlined.TrendingUp, R.string.onboard_3_title, R.string.onboard_3_sub),
     OnboardPage(Icons.Outlined.Shield, R.string.onboard_4_title, R.string.onboard_4_sub),
