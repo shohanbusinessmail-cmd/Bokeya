@@ -95,7 +95,6 @@ fun AccountsScreen(
                         style = AmountTypography.large,
                         color = MaterialTheme.colorScheme.onSurface,
                         useBengaliDigits = state.settings.useBengaliDigits,
-                        hidden = state.settings.hideAmounts,
                         animate = true,
                     )
                 }
@@ -169,7 +168,6 @@ fun AccountsScreen(
                         account = account,
                         onClick = { onAccountClick(account.id) },
                         useBengaliDigits = state.settings.useBengaliDigits,
-                        hidden = state.settings.hideAmounts,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }

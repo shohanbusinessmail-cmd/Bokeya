@@ -22,7 +22,7 @@ import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MailOutline
-import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -106,7 +106,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 SectionHeader(title = stringResource(R.string.about_privacy))
                 Spacer(Modifier.height(8.dp))
                 PrivacyRow(Icons.Outlined.CloudOff, stringResource(R.string.about_privacy_offline))
-                PrivacyRow(Icons.Outlined.VisibilityOff, stringResource(R.string.about_privacy_no_tracking))
+                PrivacyRow(Icons.Outlined.Shield, stringResource(R.string.about_privacy_no_tracking))
                 PrivacyRow(Icons.Outlined.Lock, stringResource(R.string.about_privacy_local))
                 PrivacyRow(Icons.Outlined.Bolt, stringResource(R.string.about_privacy_free))
             }

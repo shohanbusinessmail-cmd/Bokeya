@@ -155,7 +155,6 @@ fun AccountDetailScreen(
             else -> DetailContent(
                 detail = detail,
                 useBengaliDigits = state.settings.useBengaliDigits,
-                hidden = state.settings.hideAmounts,
                 onPayClick = { onPayClick(detail.account.id) },
                 onDeletePayment = { pendingPaymentDelete = it },
                 modifier = Modifier
@@ -209,7 +208,6 @@ fun AccountDetailScreen(
 private fun DetailContent(
     detail: AccountDetail,
     useBengaliDigits: Boolean,
-    hidden: Boolean,
     onPayClick: () -> Unit,
     onDeletePayment: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -241,7 +239,6 @@ private fun DetailContent(
                                 MaterialTheme.colorScheme.onSurface
                             },
                             useBengaliDigits = useBengaliDigits,
-                            hidden = hidden,
                             animate = true,
                         )
                     }
@@ -255,7 +252,6 @@ private fun DetailContent(
                     total = account.total,
                     percent = account.progressPercent,
                     useBengaliDigits = useBengaliDigits,
-                    hidden = hidden,
                     color = accent,
                 )
 
@@ -265,19 +261,16 @@ private fun DetailContent(
                     MiniStat(
                         label = stringResource(R.string.details_original),
                         value = MoneyFormatter.format(account.total, useBengaliDigits),
-                        hidden = hidden,
                         modifier = Modifier.weight(1f),
                     )
                     MiniStat(
                         label = stringResource(R.string.label_paid),
                         value = MoneyFormatter.format(account.paid, useBengaliDigits),
-                        hidden = hidden,
                         modifier = Modifier.weight(1f),
                     )
                     MiniStat(
                         label = stringResource(R.string.label_remaining),
                         value = MoneyFormatter.format(account.remaining, useBengaliDigits),
-                        hidden = hidden,
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -300,7 +293,6 @@ private fun DetailContent(
             InfoCard(
                 detail = detail,
                 useBengaliDigits = useBengaliDigits,
-                hidden = hidden,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
@@ -316,7 +308,7 @@ private fun DetailContent(
                 BokeyaCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                     detail.items.forEachIndexed { index, item ->
                         if (index > 0) Spacer(Modifier.height(10.dp))
-                        ItemRow(item, useBengaliDigits, hidden)
+                        ItemRow(item, useBengaliDigits)
                     }
                 }
             }
@@ -337,7 +329,6 @@ private fun DetailContent(
                     installment = installment,
                     index = index,
                     useBengaliDigits = useBengaliDigits,
-                    hidden = hidden,
                     accentColor = accent,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
@@ -369,7 +360,6 @@ private fun DetailContent(
                             isFirst = index == 0,
                             isLast = index == detail.payments.lastIndex,
                             useBengaliDigits = useBengaliDigits,
-                            hidden = hidden,
                             onLongClick = { onDeletePayment(payment.id) },
                         )
                     }
@@ -383,7 +373,6 @@ private fun DetailContent(
 private fun MiniStat(
     label: String,
     value: String,
-    hidden: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -401,7 +390,7 @@ private fun MiniStat(
         )
         Spacer(Modifier.height(2.dp))
         Text(
-            text = if (hidden) "৳ ••••" else value,
+            text = value,
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
@@ -414,7 +403,6 @@ private fun MiniStat(
 private fun InfoCard(
     detail: AccountDetail,
     useBengaliDigits: Boolean,
-    hidden: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val account = detail.account
@@ -438,13 +426,13 @@ private fun InfoCard(
         detail.principal?.let {
             add(
                 stringResource(R.string.field_loan_amount) to
-                    if (hidden) "৳ ••••" else MoneyFormatter.format(it, useBengaliDigits),
+                    MoneyFormatter.format(it, useBengaliDigits),
             )
         }
         detail.downPayment?.takeIf { it.isPositive }?.let {
             add(
                 stringResource(R.string.field_down_payment) to
-                    if (hidden) "৳ ••••" else MoneyFormatter.format(it, useBengaliDigits),
+                    MoneyFormatter.format(it, useBengaliDigits),
             )
         }
         detail.interestRatePercent?.let {
@@ -463,7 +451,7 @@ private fun InfoCard(
         account.installmentAmount?.takeIf { it.isPositive }?.let {
             add(
                 stringResource(R.string.field_installment_amount) to
-                    if (hidden) "৳ ••••" else MoneyFormatter.format(it, useBengaliDigits),
+                    MoneyFormatter.format(it, useBengaliDigits),
             )
         }
         account.tenureCount?.let { count ->
@@ -538,7 +526,7 @@ private fun InfoCard(
 }
 
 @Composable
-private fun ItemRow(item: DebtItem, useBengaliDigits: Boolean, hidden: Boolean) {
+private fun ItemRow(item: DebtItem, useBengaliDigits: Boolean) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
             Text(
@@ -568,7 +556,6 @@ private fun ItemRow(item: DebtItem, useBengaliDigits: Boolean, hidden: Boolean) 
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
             useBengaliDigits = useBengaliDigits,
-            hidden = hidden,
         )
     }
 }
@@ -578,7 +565,6 @@ private fun InstallmentRow(
     installment: Installment,
     index: Int,
     useBengaliDigits: Boolean,
-    hidden: Boolean,
     accentColor: androidx.compose.ui.graphics.Color,
     modifier: Modifier = Modifier,
 ) {
@@ -640,7 +626,6 @@ private fun InstallmentRow(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
                 useBengaliDigits = useBengaliDigits,
-                hidden = hidden,
             )
         }
     }

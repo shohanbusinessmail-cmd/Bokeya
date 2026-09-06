@@ -57,7 +57,6 @@ fun IncomeExpenseChart(
     trend: List<MonthlyTrend>,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
 ) {
     if (trend.isEmpty()) return
 
@@ -93,11 +92,11 @@ fun IncomeExpenseChart(
                         verticalAlignment = Alignment.Bottom,
                     ) {
                         Bar(
-                            fraction = if (hidden) 0.35f else month.income.minor.toFloat() / maxValue,
+                            fraction = month.income.minor.toFloat() / maxValue,
                             color = incomeColor,
                         )
                         Bar(
-                            fraction = if (hidden) 0.2f else month.expense.minor.toFloat() / maxValue,
+                            fraction = month.expense.minor.toFloat() / maxValue,
                             color = expenseColor,
                         )
                     }
@@ -222,7 +221,6 @@ fun CategoryBars(
     categories: List<CategorySpend>,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     maxRows: Int = 5,
     fallbackColor: Color = MaterialTheme.colorScheme.primary,
 ) {
@@ -256,7 +254,6 @@ fun CategoryBars(
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         useBengaliDigits = useBengaliDigits,
-                        hidden = hidden,
                     )
                 }
                 Spacer(Modifier.height(6.dp))
@@ -293,7 +290,6 @@ fun PaidProgress(
     percent: Int,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     color: Color = MaterialTheme.colorScheme.primary,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -313,8 +309,8 @@ fun PaidProgress(
             Text(
                 text = stringResource(
                     R.string.of_total,
-                    MoneyFormatter.format(total, useBengaliDigits).takeIf { !hidden } ?: "৳ ••••",
-                    MoneyFormatter.format(paid, useBengaliDigits).takeIf { !hidden } ?: "৳ ••••",
+                    MoneyFormatter.format(total, useBengaliDigits),
+                    MoneyFormatter.format(paid, useBengaliDigits),
                 ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

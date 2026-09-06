@@ -137,7 +137,6 @@ fun HistoryScreen(
                                 }
                             },
                             useBengaliDigits = state.settings.useBengaliDigits,
-                            hidden = state.settings.hideAmounts,
                             modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }

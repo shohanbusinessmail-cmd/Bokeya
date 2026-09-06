@@ -86,7 +86,6 @@ fun InsightsScreen(
                             IncomeExpenseChart(
                                 trend = state.monthlyTrend,
                                 useBengaliDigits = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                             )
                         }
                     }
@@ -100,7 +99,6 @@ fun InsightsScreen(
                             CategoryBars(
                                 categories = state.expenseBreakdown,
                                 useBengaliDigits = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 maxRows = 8,
                             )
                         }

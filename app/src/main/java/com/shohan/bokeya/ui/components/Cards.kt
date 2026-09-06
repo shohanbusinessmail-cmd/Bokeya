@@ -113,7 +113,6 @@ fun StatTile(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     accent: Color = MaterialTheme.colorScheme.primary,
-    hidden: Boolean = false,
     useBengaliDigits: Boolean = true,
     onClick: (() -> Unit)? = null,
     compactAmount: Boolean = false,
@@ -146,7 +145,6 @@ fun StatTile(
             style = AmountTypography.small,
             color = MaterialTheme.colorScheme.onSurface,
             useBengaliDigits = useBengaliDigits,
-            hidden = hidden,
             compact = compactAmount,
         )
     }

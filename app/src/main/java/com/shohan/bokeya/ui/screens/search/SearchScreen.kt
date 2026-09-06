@@ -121,7 +121,6 @@ fun SearchScreen(
                                 account = account,
                                 onClick = { onAccountClick(account.id) },
                                 useBengaliDigits = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 showProgress = false,
                                 modifier = Modifier.padding(horizontal = 16.dp),
                             )
@@ -147,7 +146,6 @@ fun SearchScreen(
                                     }
                                 },
                                 useBengaliDigits = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 modifier = Modifier.padding(horizontal = 16.dp),
                             )
                         }

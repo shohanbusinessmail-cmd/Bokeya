@@ -140,7 +140,6 @@ fun MoneyScreen(
                                 money = state.income,
                                 color = BokeyaTheme.colors.income,
                                 bengali = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 modifier = Modifier.weight(1f),
                             )
                             SummaryColumn(
@@ -148,7 +147,6 @@ fun MoneyScreen(
                                 money = state.expense,
                                 color = BokeyaTheme.colors.expense,
                                 bengali = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 modifier = Modifier.weight(1f),
                             )
                             SummaryColumn(
@@ -160,7 +158,6 @@ fun MoneyScreen(
                                     MaterialTheme.colorScheme.onSurface
                                 },
                                 bengali = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                                 modifier = Modifier.weight(1f),
                             )
                         }
@@ -175,7 +172,6 @@ fun MoneyScreen(
                             CategoryBars(
                                 categories = state.breakdown,
                                 useBengaliDigits = state.settings.useBengaliDigits,
-                                hidden = state.settings.hideAmounts,
                             )
                         }
                     }
@@ -214,7 +210,6 @@ fun MoneyScreen(
                             onClick = { onEditEntry(entry.isIncome, entry.id) },
                             onLongClick = { pendingDelete = entry },
                             useBengaliDigits = state.settings.useBengaliDigits,
-                            hidden = state.settings.hideAmounts,
                             modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }
@@ -276,7 +271,6 @@ private fun SummaryColumn(
     money: com.shohan.bokeya.core.money.Money,
     color: androidx.compose.ui.graphics.Color,
     bengali: Boolean,
-    hidden: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -291,7 +285,6 @@ private fun SummaryColumn(
             style = AmountTypography.small,
             color = color,
             useBengaliDigits = bengali,
-            hidden = hidden,
             compact = true,
         )
     }

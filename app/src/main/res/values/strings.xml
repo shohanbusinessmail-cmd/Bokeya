@@ -382,8 +382,6 @@
     <string name="settings_change_pin">PIN বদলান</string>
     <string name="settings_biometric">আঙুলের ছাপ / Face দিয়ে খুলুন</string>
     <string name="settings_biometric_unavailable">এই ফোনে Biometric নেই বা সেট করা নেই</string>
-    <string name="settings_hide_amounts">টাকার অঙ্ক লুকিয়ে রাখুন</string>
-    <string name="settings_hide_amounts_sub">দেখতে চাইলে চোখের আইকনে চাপুন</string>
 
     <string name="settings_backup">Backup &amp; Restore</string>
     <string name="settings_backup_now">Backup নিন</string>
@@ -619,8 +617,6 @@
     <string name="cd_settings">Settings খুলুন</string>
     <string name="cd_more_options">আরও অপশন</string>
     <string name="cd_add">যোগ করুন</string>
-    <string name="cd_toggle_amount_visibility">টাকার অঙ্ক দেখান বা লুকান</string>
-    <string name="cd_amount_hidden">টাকার অঙ্ক লুকানো আছে</string>
     <string name="cd_status_badge">অবস্থা: %1$s</string>
     <string name="cd_progress">%1$s শতাংশ পরিশোধ হয়েছে</string>
     <string name="cd_account_card">%1$s, বাকি %2$s, অবস্থা %3$s</string>

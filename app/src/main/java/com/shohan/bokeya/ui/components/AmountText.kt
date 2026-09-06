@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
  *
  * When [animate] is on, the number counts up to its new value instead of
  * snapping — the small touch that makes a balance update feel deliberate. The
- * animation is disabled in previews and when the value is hidden.
+ * animation is disabled in previews.
  */
 @Composable
 fun AmountText(
@@ -34,14 +34,13 @@ fun AmountText(
     withSymbol: Boolean = true,
     showPoisha: Boolean = false,
     compact: Boolean = false,
-    hidden: Boolean = false,
     animate: Boolean = false,
     maxLines: Int = 1,
 ) {
     val inPreview = LocalInspectionMode.current
     val resolvedColor = if (color == Color.Unspecified) LocalContentColor.current else color
 
-    val displayMoney = if (animate && !inPreview && !hidden) {
+    val displayMoney = if (animate && !inPreview) {
         // animateIntAsState works in whole Taka: animating poisha would overflow
         // Int for large balances and the extra precision is invisible anyway.
         val target = money.wholeTaka.coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
@@ -55,15 +54,15 @@ fun AmountText(
         money
     }
 
-    val text = when {
-        hidden -> HIDDEN_PLACEHOLDER
-        compact -> MoneyFormatter.formatCompact(displayMoney, useBengaliDigits, withSymbol)
-        else -> MoneyFormatter.format(displayMoney, useBengaliDigits, withSymbol, showPoisha)
+    val text = if (compact) {
+        MoneyFormatter.formatCompact(displayMoney, useBengaliDigits, withSymbol)
+    } else {
+        MoneyFormatter.format(displayMoney, useBengaliDigits, withSymbol, showPoisha)
     }
 
     // Screen readers always announce the true, unabbreviated amount.
-    val spoken = remember(money, hidden, useBengaliDigits) {
-        if (hidden) HIDDEN_DESCRIPTION else MoneyFormatter.format(money, useBengaliDigits, true, showPoisha)
+    val spoken = remember(money, useBengaliDigits, showPoisha) {
+        MoneyFormatter.format(money, useBengaliDigits, true, showPoisha)
     }
 
     Text(
@@ -75,6 +74,3 @@ fun AmountText(
         overflow = TextOverflow.Ellipsis,
     )
 }
-
-private const val HIDDEN_PLACEHOLDER = "৳ ••••"
-private const val HIDDEN_DESCRIPTION = "টাকার অঙ্ক লুকানো আছে"

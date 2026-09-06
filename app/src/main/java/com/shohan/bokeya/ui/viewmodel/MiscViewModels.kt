@@ -318,8 +318,6 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
 
     fun setBengaliDigits(enabled: Boolean) = launchPref { container.preferences.setBengaliDigits(enabled) }
 
-    fun setHideAmounts(enabled: Boolean) = launchPref { container.preferences.setHideAmounts(enabled) }
-
     fun setUserName(name: String) = launchPref { container.preferences.setUserName(name) }
 
     fun setNotificationsEnabled(enabled: Boolean) = launchPref {

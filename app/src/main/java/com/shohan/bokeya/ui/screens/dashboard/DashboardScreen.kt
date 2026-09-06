@@ -25,8 +25,6 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material.icons.outlined.Wallet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -99,7 +97,6 @@ fun DashboardScreen(
         item("greeting") {
             GreetingRow(
                 state = state,
-                onToggleVisibility = viewModel::toggleAmountVisibility,
                 onSearchClick = onSearchClick,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -118,7 +115,6 @@ fun DashboardScreen(
                     count = state.summary.overdueCount,
                     amount = state.summary.overdueAmount,
                     useBengaliDigits = state.settings.useBengaliDigits,
-                    hidden = state.settings.hideAmounts,
                     onClick = onSeeAllAccounts,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
@@ -137,7 +133,6 @@ fun DashboardScreen(
                     amount = state.summary.incomeToday,
                     icon = Icons.AutoMirrored.Outlined.TrendingUp,
                     accent = BokeyaTheme.colors.income,
-                    hidden = state.settings.hideAmounts,
                     useBengaliDigits = state.settings.useBengaliDigits,
                     onClick = { onAddMoney(true) },
                     modifier = Modifier.weight(1f),
@@ -147,7 +142,6 @@ fun DashboardScreen(
                     amount = state.summary.expenseToday,
                     icon = Icons.AutoMirrored.Outlined.TrendingDown,
                     accent = BokeyaTheme.colors.expense,
-                    hidden = state.settings.hideAmounts,
                     useBengaliDigits = state.settings.useBengaliDigits,
                     onClick = { onAddMoney(false) },
                     modifier = Modifier.weight(1f),
@@ -167,7 +161,6 @@ fun DashboardScreen(
                     payment = payment,
                     onClick = { onPayClick(payment.accountId) },
                     useBengaliDigits = state.settings.useBengaliDigits,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -187,7 +180,6 @@ fun DashboardScreen(
                     payment = payment,
                     onClick = { onAccountClick(payment.accountId) },
                     useBengaliDigits = state.settings.useBengaliDigits,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -225,7 +217,6 @@ fun DashboardScreen(
                     IncomeExpenseChart(
                         trend = state.trend,
                         useBengaliDigits = state.settings.useBengaliDigits,
-                        hidden = state.settings.hideAmounts,
                     )
                 }
             }
@@ -245,7 +236,6 @@ fun DashboardScreen(
                     entry = entry,
                     onClick = { entry.accountId?.let(onAccountClick) },
                     useBengaliDigits = state.settings.useBengaliDigits,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -268,7 +258,6 @@ fun DashboardScreen(
 @Composable
 private fun GreetingRow(
     state: DashboardUiState,
-    onToggleVisibility: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -302,17 +291,6 @@ private fun GreetingRow(
             )
         }
 
-        IconButton(onClick = onToggleVisibility) {
-            Icon(
-                imageVector = if (state.settings.hideAmounts) {
-                    Icons.Outlined.VisibilityOff
-                } else {
-                    Icons.Outlined.Visibility
-                },
-                contentDescription = stringResource(R.string.cd_toggle_amount_visibility),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
         IconButton(onClick = onSearchClick) {
             Icon(
                 imageVector = Icons.Outlined.Search,
@@ -341,7 +319,6 @@ private fun HeroCard(state: DashboardUiState, modifier: Modifier = Modifier) {
                 style = AmountTypography.hero,
                 color = Color.White,
                 useBengaliDigits = bengali,
-                hidden = state.settings.hideAmounts,
                 animate = true,
             )
 
@@ -358,7 +335,6 @@ private fun HeroCard(state: DashboardUiState, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.titleSmall,
                         color = BokeyaTheme.colors.successContainer,
                         useBengaliDigits = bengali,
-                        hidden = state.settings.hideAmounts,
                     )
                 }
             }
@@ -373,21 +349,18 @@ private fun HeroCard(state: DashboardUiState, modifier: Modifier = Modifier) {
                     label = stringResource(R.string.dashboard_due_today),
                     amount = summary.dueToday,
                     bengali = bengali,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.weight(1f),
                 )
                 HeroStat(
                     label = stringResource(R.string.dashboard_due_week),
                     amount = summary.dueThisWeek,
                     bengali = bengali,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.weight(1f),
                 )
                 HeroStat(
                     label = stringResource(R.string.dashboard_due_month),
                     amount = summary.dueThisMonth,
                     bengali = bengali,
-                    hidden = state.settings.hideAmounts,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -400,7 +373,6 @@ private fun HeroStat(
     label: String,
     amount: Money,
     bengali: Boolean,
-    hidden: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -422,7 +394,6 @@ private fun HeroStat(
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
             useBengaliDigits = bengali,
-            hidden = hidden,
             compact = true,
         )
     }
@@ -433,7 +404,6 @@ private fun OverdueBanner(
     count: Int,
     amount: Money,
     useBengaliDigits: Boolean,
-    hidden: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -466,7 +436,6 @@ private fun OverdueBanner(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     useBengaliDigits = useBengaliDigits,
-                    hidden = hidden,
                 )
             }
         }
@@ -488,11 +457,10 @@ private fun DebtBreakdownCard(state: DashboardUiState, modifier: Modifier = Modi
             DonutChart(
                 slices = slices,
                 centerLabel = stringResource(R.string.label_total),
-                centerValue = if (state.settings.hideAmounts) {
-                    "৳ ••••"
-                } else {
-                    MoneyFormatter.formatCompact(state.summary.totalDue, state.settings.useBengaliDigits)
-                },
+                centerValue = MoneyFormatter.formatCompact(
+                    state.summary.totalDue,
+                    state.settings.useBengaliDigits,
+                ),
             )
             Spacer(Modifier.width(14.dp))
             Column(
@@ -521,7 +489,6 @@ private fun DebtBreakdownCard(state: DashboardUiState, modifier: Modifier = Modi
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurface,
                             useBengaliDigits = state.settings.useBengaliDigits,
-                            hidden = state.settings.hideAmounts,
                             compact = true,
                         )
                     }

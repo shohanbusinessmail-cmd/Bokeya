@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
@@ -115,12 +114,5 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
 
     fun refresh() {
         refreshTrigger.value = refreshTrigger.value + 1
-    }
-
-    fun toggleAmountVisibility() {
-        viewModelScope.launch {
-            val current = container.preferences.current()
-            container.preferences.setHideAmounts(!current.hideAmounts)
-        }
     }
 }

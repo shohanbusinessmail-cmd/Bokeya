@@ -133,7 +133,6 @@ fun CalendarScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 useBengaliDigits = bengali,
-                                hidden = state.settings.hideAmounts,
                             )
                         }
                     }
@@ -166,7 +165,6 @@ fun CalendarScreen(
                         payment = payment,
                         onClick = { onAccountClick(payment.accountId) },
                         useBengaliDigits = bengali,
-                        hidden = state.settings.hideAmounts,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
@@ -177,7 +175,6 @@ fun CalendarScreen(
                         entry = entry,
                         onClick = { entry.accountId?.let(onAccountClick) },
                         useBengaliDigits = bengali,
-                        hidden = state.settings.hideAmounts,
                         showDate = false,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )

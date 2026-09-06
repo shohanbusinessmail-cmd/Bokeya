@@ -135,12 +135,6 @@ fun SettingsScreen(
                     checked = settings.useBengaliDigits,
                     onCheckedChange = viewModel::setBengaliDigits,
                 )
-                SwitchRow(
-                    title = stringResource(R.string.settings_hide_amounts),
-                    subtitle = stringResource(R.string.settings_hide_amounts_sub),
-                    checked = settings.hideAmounts,
-                    onCheckedChange = viewModel::setHideAmounts,
-                )
             }
 
             // ---------------------------------------------- notifications

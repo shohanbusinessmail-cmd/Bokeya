@@ -26,7 +26,6 @@ data class UserSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val useDynamicColor: Boolean = false,
     val useBengaliDigits: Boolean = true,
-    val hideAmounts: Boolean = false,
     val notificationsEnabled: Boolean = true,
     val reminderDaysBefore: Int = 1,
     val reminderSameDay: Boolean = true,
@@ -57,7 +56,6 @@ class UserPreferencesRepository(private val context: Context) {
         val THEME = stringPreferencesKey("theme_mode")
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
         val BENGALI_DIGITS = booleanPreferencesKey("bengali_digits")
-        val HIDE_AMOUNTS = booleanPreferencesKey("hide_amounts")
         val NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
         val REMINDER_DAYS = intPreferencesKey("reminder_days_before")
         val REMINDER_SAME_DAY = booleanPreferencesKey("reminder_same_day")
@@ -87,7 +85,6 @@ class UserPreferencesRepository(private val context: Context) {
         } ?: ThemeMode.SYSTEM,
         useDynamicColor = this[Keys.DYNAMIC_COLOR] ?: false,
         useBengaliDigits = this[Keys.BENGALI_DIGITS] ?: true,
-        hideAmounts = this[Keys.HIDE_AMOUNTS] ?: false,
         notificationsEnabled = this[Keys.NOTIFICATIONS] ?: true,
         reminderDaysBefore = this[Keys.REMINDER_DAYS] ?: 1,
         reminderSameDay = this[Keys.REMINDER_SAME_DAY] ?: true,
@@ -109,8 +106,6 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setDynamicColor(enabled: Boolean) = edit { it[Keys.DYNAMIC_COLOR] = enabled }
 
     suspend fun setBengaliDigits(enabled: Boolean) = edit { it[Keys.BENGALI_DIGITS] = enabled }
-
-    suspend fun setHideAmounts(enabled: Boolean) = edit { it[Keys.HIDE_AMOUNTS] = enabled }
 
     suspend fun setNotificationsEnabled(enabled: Boolean) = edit { it[Keys.NOTIFICATIONS] = enabled }
 

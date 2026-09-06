@@ -116,7 +116,6 @@ fun RemindersScreen(
                         payment = payment,
                         onClick = { onAccountClick(payment.accountId) },
                         useBengaliDigits = settings.useBengaliDigits,
-                        hidden = settings.hideAmounts,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }

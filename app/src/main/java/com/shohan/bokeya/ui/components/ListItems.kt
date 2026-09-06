@@ -58,7 +58,6 @@ fun AccountCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     showProgress: Boolean = true,
 ) {
     val accent = account.type.accent()
@@ -132,7 +131,6 @@ fun AccountCard(
                         MaterialTheme.colorScheme.onSurface
                     },
                     useBengaliDigits = useBengaliDigits,
-                    hidden = hidden,
                 )
                 Spacer(Modifier.height(5.dp))
                 StatusBadge(status = account.status, compact = true)
@@ -181,7 +179,6 @@ fun UpcomingPaymentRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
 ) {
     val accent = if (payment.isOverdue) MaterialTheme.colorScheme.error else payment.accountType.accent()
 
@@ -223,7 +220,6 @@ fun UpcomingPaymentRow(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
                 useBengaliDigits = useBengaliDigits,
-                hidden = hidden,
             )
         }
     }
@@ -236,7 +232,6 @@ fun LedgerRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     showDate: Boolean = true,
 ) {
     val color = entry.type.amountColor()
@@ -294,11 +289,7 @@ fun LedgerRow(
         Spacer(Modifier.width(8.dp))
 
         Text(
-            text = if (hidden) {
-                "৳ ••••"
-            } else {
-                sign + MoneyFormatter.format(entry.amount, useBengaliDigits)
-            },
+            text = sign + MoneyFormatter.format(entry.amount, useBengaliDigits),
             style = MaterialTheme.typography.titleSmall,
             color = color,
             maxLines = 1,
@@ -313,7 +304,6 @@ fun MoneyEntryRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     onLongClick: (() -> Unit)? = null,
 ) {
     val fallback = if (entry.isIncome) BokeyaTheme.colors.income else BokeyaTheme.colors.expense
@@ -378,7 +368,6 @@ fun MoneyEntryRow(
             style = MaterialTheme.typography.titleSmall,
             color = if (entry.isIncome) BokeyaTheme.colors.income else MaterialTheme.colorScheme.onSurface,
             useBengaliDigits = useBengaliDigits,
-            hidden = hidden,
         )
     }
 }
@@ -391,7 +380,6 @@ fun PaymentTimelineRow(
     isLast: Boolean,
     modifier: Modifier = Modifier,
     useBengaliDigits: Boolean = true,
-    hidden: Boolean = false,
     onLongClick: (() -> Unit)? = null,
 ) {
     val accent = BokeyaTheme.colors.success
@@ -443,7 +431,6 @@ fun PaymentTimelineRow(
                     style = MaterialTheme.typography.titleSmall,
                     color = accent,
                     useBengaliDigits = useBengaliDigits,
-                    hidden = hidden,
                 )
                 Text(
                     text = payment.method.label(),
