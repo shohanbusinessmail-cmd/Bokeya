@@ -1,42 +1,78 @@
-name: CI Probe
+name: Build check
+
 on:
   workflow_dispatch:
   push:
     branches: [ "arena/01a0776e-bokeya" ]
+
 permissions:
   contents: read
   issues: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  probe:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
-      - name: Compat matrix
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Assemble debug + run unit tests
+        id: build
         run: |
           set +e
-          out=/tmp/v.txt; : > $out
-          G=https://dl.google.com/dl/android/maven2
-          M=https://repo1.maven.org/maven2
-          echo "### KSP versions matching 2.4 / 2.3.2x" >> $out
-          curl -s "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -E '^2\.(3|4)' | tr '\n' ' ' >> $out; echo "" >> $out
-          echo "### AGP 8.13.2 min gradle" >> $out
-          curl -s "$G/com/android/tools/build/gradle/8.13.2/gradle-8.13.2.pom" | head -30 >> $out
-          echo "### compose-bom 2026.08.00 -> material3 mapping" >> $out
-          curl -s "$G/androidx/compose/compose-bom/2026.08.00/compose-bom-2026.08.00.pom" | grep -A2 -E 'material3|compose-runtime|foundation' | head -30 >> $out
-          echo "### compose-bom stable list (all)" >> $out
-          curl -s "$G/androidx/compose/compose-bom/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -v -E 'alpha|beta|rc' | tr '\n' ' ' >> $out; echo "" >> $out
-          echo "### room 2.8.4 exists?" >> $out
-          curl -s -o /dev/null -w "room-compiler-2.8.4:%{http_code}\n" "$G/androidx/room/room-compiler/2.8.4/room-compiler-2.8.4.pom" >> $out
-          echo "### kotlin 2.2.21 ksp pair" >> $out
-          curl -s -o /dev/null -w "ksp-2.2.21-2.0.5:%{http_code}\n" "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/2.2.21-2.0.5/symbol-processing-gradle-plugin-2.2.21-2.0.5.pom" >> $out
-          echo "### gradle dists available" >> $out
-          for gv in 8.13 8.14 8.14.3 9.0.0 9.1.0 9.7.1; do curl -s -o /dev/null -w "gradle-$gv:%{http_code} " "https://services.gradle.org/distributions/gradle-$gv-bin.zip" >> $out; done; echo "" >> $out
-          echo "### compose compiler plugin for kotlin versions" >> $out
-          for kv in 2.2.21 2.3.21 2.4.0 2.4.10; do curl -s -o /dev/null -w "ccp-$kv:%{http_code} " "$M/org/jetbrains/kotlin/compose-compiler-gradle-plugin/$kv/compose-compiler-gradle-plugin-$kv.pom" >> $out; done; echo "" >> $out
-          cat $out
-      - name: Report
+          ./gradlew --no-daemon --stacktrace assembleDebug testDebugUnitTest > /tmp/build.log 2>&1
+          echo "exit=$?" >> $GITHUB_OUTPUT
+          tail -5 /tmp/build.log
+
+      - name: Collect failures
+        if: always()
+        run: |
+          {
+            echo "STATUS exit=${{ steps.build.outputs.exit }}"
+            echo ""
+            # Kotlin/Java compile errors, resource errors, Gradle failures
+            grep -n -E "^e: |error:|ERROR|FAILURE:|Caused by:|Unresolved reference|Execution failed|> Task .* FAILED" /tmp/build.log \
+              | head -120
+            echo ""
+            echo "--- last 60 lines ---"
+            tail -60 /tmp/build.log
+          } > /tmp/report.txt
+          wc -l /tmp/report.txt
+
+      - name: Test reports
+        if: always()
+        run: |
+          if ls app/build/reports/tests/testDebugUnitTest/index.html >/dev/null 2>&1; then
+            echo "--- unit test failures ---" >> /tmp/report.txt
+            find app/build/test-results -name "*.xml" -exec grep -l "<failure\|<error" {} \; 2>/dev/null | head -20 \
+              | while read f; do
+                  echo "== $f" >> /tmp/report.txt
+                  grep -o 'testcase name="[^"]*"' "$f" | head -5 >> /tmp/report.txt
+                  sed -n 's/.*<failure[^>]*message="\([^"]*\)".*/  MSG: \1/p' "$f" | head -10 >> /tmp/report.txt
+                done
+          fi
+          echo "done"
+
+      - name: Report to issue
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BODY=$(printf 'COMPAT run %s\n```\n%s\n```' "${{ github.run_id }}" "$(head -c 60000 /tmp/v.txt)")
+          BODY=$(printf 'BUILD run %s (%s)\n```\n%s\n```' \
+            "${{ github.run_id }}" "${{ github.sha }}" "$(head -c 55000 /tmp/report.txt)")
           gh api repos/${{ github.repository }}/issues/1/comments -f body="$BODY" --jq '.id'
+
+      - name: Fail if build failed
+        if: steps.build.outputs.exit != '0'
+        run: exit 1
