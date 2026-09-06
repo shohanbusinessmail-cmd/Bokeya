@@ -6,7 +6,7 @@ on:
     branches: [ "arena/01a0776e-bokeya" ]
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -43,6 +43,31 @@ jobs:
         if: always()
         run: |
           find app/build/outputs/apk -name "*.apk" -printf "%f  %s bytes\n" 2>/dev/null || true
+
+      - name: Stage APKs for download
+        if: always()
+        run: |
+          mkdir -p artifacts
+          # Give the downloadable files self-describing names instead of
+          # Gradle's generic app-debug.apk / app-release.apk.
+          V=$(grep -m1 'versionName' app/build.gradle.kts | sed -E 's/.*"(.*)".*/\1/')
+          S=$(git rev-parse --short HEAD)
+          for f in $(find app/build/outputs/apk -name "*.apk" 2>/dev/null); do
+            case "$f" in
+              *release*) cp "$f" "artifacts/bokeya-${V}-${S}-release.apk" ;;
+              *)         cp "$f" "artifacts/bokeya-${V}-${S}-debug.apk" ;;
+            esac
+          done
+          ls -lh artifacts || true
+
+      - name: Upload APKs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bokeya-apk
+          path: artifacts/*.apk
+          if-no-files-found: warn
+          retention-days: 90
 
       - name: Collect failures
         if: always()
@@ -88,6 +113,26 @@ jobs:
           BODY=$(printf 'BUILD run %s (%s)\n```\n%s\n```' \
             "${{ github.run_id }}" "${{ github.sha }}" "$(head -c 55000 /tmp/report.txt)")
           gh api repos/${{ github.repository }}/issues/1/comments -f body="$BODY" --jq '.id'
+
+      - name: Publish APKs to the rolling "latest-build" release
+        if: steps.build.outputs.exit == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Best effort: a permissions-restricted token must not fail the build.
+          set +e
+          gh release delete latest-build --yes --cleanup-tag 2>/dev/null
+          gh release create latest-build artifacts/*.apk \
+            --title "Bokeya - latest build" \
+            --prerelease \
+            --notes "Automatic build of \`${{ github.sha }}\` on branch \`${{ github.ref_name }}\`.
+
+          - \`*-debug.apk\` - install this one for testing (debug build, includes sample data seeding).
+          - \`*-release.apk\` - minified R8 build, currently signed with the **debug** keystore, so it is for testing only and cannot be uploaded to Play.
+
+          Enable \"Install unknown apps\" for your browser or file manager before installing."
+          echo "release step exit=$?"
+          exit 0
 
       - name: Fail if build failed
         if: steps.build.outputs.exit != '0'

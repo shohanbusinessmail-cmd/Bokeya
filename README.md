@@ -14,6 +14,7 @@ sync with, no subscription, and no ads.
 
 ## Table of contents
 
+- [Download](#download)
 - [Why Bokeya](#why-bokeya)
 - [Features](#features)
 - [Screenshots](#screenshots)
@@ -25,6 +26,33 @@ sync with, no subscription, and no ads.
 - [Privacy philosophy](#privacy-philosophy)
 - [License](#license)
 - [Developer](#developer)
+
+---
+
+## Download
+
+Every push to the build branch produces installable APKs. You do not need
+Android Studio to try the app.
+
+**Easiest — the rolling release:**
+[**github.com/shohanbusinessmail-cmd/Bokeya/releases/tag/latest-build**](https://github.com/shohanbusinessmail-cmd/Bokeya/releases/tag/latest-build)
+
+Download `bokeya-<version>-<commit>-debug.apk`, copy it to your phone, and open
+it. Android will ask you to allow "Install unknown apps" for whichever app you
+opened it from — that is expected for any APK installed outside the Play Store.
+
+**Alternative — the CI artifact:** open the
+[Actions tab](https://github.com/shohanbusinessmail-cmd/Bokeya/actions), pick the
+newest green **Build check** run, and download the **bokeya-apk** ZIP from the
+*Artifacts* section at the bottom. Artifacts are kept for 90 days and require
+you to be signed in to GitHub.
+
+| File | Use it for |
+| --- | --- |
+| `…-debug.apk` | Everyday testing. Application id `com.shohan.bokeya.debug`, so it installs alongside a release copy, and it exposes the "নমুনা তথ্য" demo-data option in Settings. |
+| `…-release.apk` | Checking the minified R8 build. **Not publishable** — see the signing note under [Build & run](#build--run). |
+
+Minimum Android version: **7.0 (API 24)**.
 
 ---
 
@@ -211,6 +239,10 @@ app/src/main/java/com/shohan/bokeya/
 ---
 
 ## Build & run
+
+If you only want to install the app, grab a prebuilt APK from
+[Download](#download) instead — building from source is only needed for
+development.
 
 **Requirements:** JDK 17, Android SDK 36, Android Studio Ladybug or newer.
 
