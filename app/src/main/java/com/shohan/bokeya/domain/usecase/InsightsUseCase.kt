@@ -59,7 +59,7 @@ class InsightsUseCase(
             insights += Insight(
                 id = "overdue",
                 text = context.getString(R.string.insight_overdue_count, number(overdue.size)),
-                tone = InsightTone.WARNING,
+                tone = InsightTone.CRITICAL,
                 iconKey = "warning",
             )
         }

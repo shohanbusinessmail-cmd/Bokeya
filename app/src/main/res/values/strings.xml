@@ -28,6 +28,8 @@
     <string name="action_call">কল করুন</string>
     <string name="action_start">শুরু করুন</string>
     <string name="action_continue">চালিয়ে যান</string>
+    <string name="action_get_started">শুরু করা যাক</string>
+    <string name="action_remove">সরিয়ে ফেলুন</string>
     <string name="label_optional">(ঐচ্ছিক)</string>
     <string name="label_yes">হ্যাঁ</string>
     <string name="label_no">না</string>
@@ -426,6 +428,28 @@
     <string name="lock_pin_changed">PIN বদলানো হয়েছে</string>
     <string name="lock_delete_digit">একটি সংখ্যা মুছুন</string>
 
+    <!-- ============ Security screen ============ -->
+    <string name="security_title">App Lock</string>
+    <string name="security_intro">PIN চালু থাকলে অ্যাপ খুললেই আগে PIN চাইবে। আপনার হিসাব অন্য কেউ দেখতে পাবে না।</string>
+    <string name="security_set_pin">PIN তৈরি করুন</string>
+    <string name="security_change_pin">PIN বদলান</string>
+    <string name="security_pin_set">PIN চালু আছে</string>
+    <string name="security_pin_not_set">এখনো PIN দেওয়া হয়নি</string>
+    <string name="security_current_pin">বর্তমান PIN</string>
+    <string name="security_new_pin">নতুন PIN</string>
+    <string name="security_confirm_pin">নতুন PIN আবার দিন</string>
+    <string name="security_pin_length">PIN কমপক্ষে ৪ সংখ্যার হতে হবে</string>
+    <string name="security_pin_mismatch">দুইবারের PIN এক হয়নি</string>
+    <string name="security_pin_wrong">বর্তমান PIN ঠিক হয়নি</string>
+    <string name="security_pin_saved">PIN সংরক্ষণ হয়েছে</string>
+    <string name="security_biometric">আঙুলের ছাপ দিয়ে খুলুন</string>
+    <string name="security_biometric_sub">PIN-এর বদলে আঙুলের ছাপ ব্যবহার করতে পারবেন</string>
+    <string name="security_biometric_unavailable">এই ফোনে Biometric সেট করা নেই</string>
+    <string name="security_remove_lock">App Lock বন্ধ করুন</string>
+    <string name="security_remove_lock_msg">App Lock বন্ধ করলে অ্যাপ খুলতে আর PIN লাগবে না।</string>
+    <string name="security_lock_removed">App Lock বন্ধ হয়েছে</string>
+    <string name="security_note">PIN শুধু আপনার ফোনেই সুরক্ষিতভাবে রাখা হয়। ভুলে গেলে ফিরিয়ে আনার উপায় নেই — তাই মনে রাখুন।</string>
+
     <!-- ============ Backup ============ -->
     <string name="backup_title">Backup &amp; Restore</string>
     <string name="backup_create">Backup ফাইল তৈরি করুন</string>
@@ -440,6 +464,16 @@
     <string name="backup_contents">এতে থাকবে: হিসাব, পরিশোধ, আয়-ব্যয়, ধরন ও Settings</string>
     <string name="backup_export_data">তথ্য Export করুন</string>
     <string name="backup_import_data">তথ্য Import করুন</string>
+    <string name="backup_intro">Backup ফাইলটি আপনি যেখানে রাখবেন সেখানেই থাকবে। কোথাও আপলোড হয় না।</string>
+    <string name="backup_create_action">Backup ফাইল তৈরি করুন</string>
+    <string name="backup_done">Backup সফল হয়েছে</string>
+    <string name="backup_working">কাজ চলছে…</string>
+    <string name="restore_title">Restore করুন</string>
+    <string name="restore_action">Backup ফাইল বাছাই করুন</string>
+    <string name="restore_warning">Restore করলে এখনকার সব তথ্যের জায়গায় Backup ফাইলের তথ্য বসবে।</string>
+    <string name="restore_done">%1$s টি হিসাব ফিরিয়ে আনা হয়েছে</string>
+    <string name="confirm_restore_title">Restore করবেন?</string>
+    <string name="confirm_restore_msg">এখনকার সব হিসাব মুছে গিয়ে Backup ফাইলের তথ্য বসবে। এটি আর ফিরিয়ে আনা যাবে না।</string>
 
     <!-- ============ Onboarding ============ -->
     <string name="onboard_1_title">আপনার সব বকেয়া এক জায়গায়</string>
@@ -477,6 +511,16 @@
     <string name="about_license_androidx">AndroidX &amp; Jetpack Compose — Apache License 2.0</string>
     <string name="about_license_kotlin">Kotlin &amp; kotlinx — Apache License 2.0</string>
     <string name="about_made_with">বাংলাদেশে তৈরি</string>
+    <string name="about_tagline">বাকি, ধার, Loan, EMI আর আয়-ব্যয় — সব হিসাব এক জায়গায়। সম্পূর্ণ অফলাইন।</string>
+    <string name="about_privacy">গোপনীয়তা</string>
+    <string name="about_privacy_offline">পুরোপুরি অফলাইন, ইন্টারনেট লাগে না</string>
+    <string name="about_privacy_no_tracking">কোনো বিজ্ঞাপন বা ট্র্যাকিং নেই</string>
+    <string name="about_privacy_local">সব তথ্য শুধু আপনার ফোনেই থাকে</string>
+    <string name="about_privacy_free">সম্পূর্ণ ফ্রি, কোনো সাবস্ক্রিপশন নেই</string>
+    <string name="about_developer">Developer</string>
+    <string name="about_contact">Email করুন</string>
+    <string name="about_email_subject">বকেয়া অ্যাপ সম্পর্কে</string>
+    <string name="about_licenses_body">Hind Siliguri — SIL Open Font License 1.1\nAndroidX &amp; Jetpack Compose — Apache License 2.0\nKotlin &amp; kotlinx — Apache License 2.0</string>
 
     <!-- ============ More ============ -->
     <string name="more_title">আরও</string>
@@ -497,6 +541,10 @@
     <string name="reminders_none_sub">পরিশোধের তারিখ দেওয়া হিসাব যোগ করলে এখানে দেখাবে</string>
     <string name="reminders_off">Notification বন্ধ আছে</string>
     <string name="reminders_on_hint">Notification চালু করলে কিস্তির আগে মনে করিয়ে দেব</string>
+    <string name="reminders_scheduled">যেসব পরিশোধ মনে করিয়ে দেব</string>
+    <string name="reminders_empty">মনে করানোর মতো কিছু নেই</string>
+    <string name="reminders_empty_sub">পরিশোধের তারিখ দেওয়া হিসাব যোগ করলে এখানে দেখাবে</string>
+    <string name="reminders_note">অ্যাপ বন্ধ থাকলেও Notification আসবে। ফোন রিস্টার্ট হলে নিজে থেকেই আবার চালু হয়ে যায়।</string>
 
     <!-- ============ Notifications ============ -->
     <string name="notif_channel_reminder">পরিশোধের Reminder</string>

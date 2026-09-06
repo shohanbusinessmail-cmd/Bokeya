@@ -311,9 +311,11 @@ fun <T> ChipRow(
     options: List<T>,
     selected: T,
     onSelect: (T) -> Unit,
-    label: (T) -> String,
+    // Composable lambdas: callers pass the `@Composable` enum label/accent
+    // extensions from Labels.kt, which read string and theme resources.
+    label: @Composable (T) -> String,
     modifier: Modifier = Modifier,
-    accentColor: (T) -> Color? = { null },
+    accentColor: @Composable (T) -> Color? = { null },
 ) {
     Row(
         modifier = modifier,

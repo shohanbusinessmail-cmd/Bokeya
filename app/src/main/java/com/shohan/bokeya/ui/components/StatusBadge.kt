@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Today
-import androidx.compose.material.icons.outlined.TrendingUp
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -71,7 +71,7 @@ fun StatusBadge(
         )
         AccountStatus.ACTIVE -> Quad(
             stringResource(R.string.status_active),
-            Icons.Outlined.TrendingUp,
+            Icons.AutoMirrored.Outlined.TrendingUp,
             scheme.surfaceContainerHighest,
             scheme.onSurfaceVariant,
         )

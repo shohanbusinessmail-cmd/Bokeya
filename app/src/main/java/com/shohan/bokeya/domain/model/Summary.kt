@@ -74,6 +74,9 @@ enum class InsightTone {
     POSITIVE,
     NEUTRAL,
     WARNING,
+
+    /** Needs action now — used for overdue money. */
+    CRITICAL,
 }
 
 /** Financial activity on a single calendar day. */
