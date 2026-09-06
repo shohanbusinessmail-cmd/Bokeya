@@ -22,10 +22,10 @@ import com.shohan.bokeya.domain.model.AccountType
  * so callers never hand-concatenate a path and every argument stays URL-safe.
  */
 object Routes {
-    const val SPLASH = "splash"
+    // Splash is the system splash screen (installSplashScreen) and the lock is
+    // rendered ahead of the nav graph in BokeyaAppRoot, so neither is a route.
     const val ONBOARDING = "onboarding"
     const val SETUP = "setup"
-    const val LOCK = "lock"
 
     const val HOME = "home"
     const val ACCOUNTS = "accounts"

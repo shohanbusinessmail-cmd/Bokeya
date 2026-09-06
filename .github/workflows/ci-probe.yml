@@ -27,13 +27,22 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Assemble debug + run unit tests
+      - name: Assemble debug + release, run unit tests and lint
         id: build
         run: |
           set +e
-          ./gradlew --no-daemon --stacktrace assembleDebug testDebugUnitTest > /tmp/build.log 2>&1
+          # assembleRelease is included so minification/R8 and the release
+          # manifest are validated too, not just the debug variant.
+          ./gradlew --no-daemon --stacktrace \
+            assembleDebug assembleRelease testDebugUnitTest lintDebug \
+            > /tmp/build.log 2>&1
           echo "exit=$?" >> $GITHUB_OUTPUT
           tail -5 /tmp/build.log
+
+      - name: APK sizes
+        if: always()
+        run: |
+          find app/build/outputs/apk -name "*.apk" -printf "%f  %s bytes\n" 2>/dev/null || true
 
       - name: Collect failures
         if: always()
