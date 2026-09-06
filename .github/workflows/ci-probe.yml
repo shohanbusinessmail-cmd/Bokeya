@@ -3,8 +3,29 @@ on:
   workflow_dispatch:
   push:
     branches: [ "arena/01a0776e-bokeya" ]
+permissions:
+  contents: read
+  issues: write
+  checks: write
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "probe ok"; java -version; echo "ANDROID_HOME=$ANDROID_HOME"; ls $ANDROID_HOME/platforms 2>/dev/null | tail -5
+      - name: Env info
+        run: |
+          { echo "java:"; java -version 2>&1; echo "ANDROID_HOME=$ANDROID_HOME";
+            ls $ANDROID_HOME/platforms 2>/dev/null | tail -6;
+            ls $ANDROID_HOME/build-tools 2>/dev/null | tail -6;
+            echo "gradle: $(gradle --version 2>/dev/null | grep Gradle | head -1)"; } > /tmp/report.txt
+          cat /tmp/report.txt
+      - name: Artifact channel
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-report
+          path: /tmp/report.txt
+      - name: Issue-comment channel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY=$(printf '```\n%s\n```' "$(cat /tmp/report.txt)")
+          gh api repos/${{ github.repository }}/issues -f title="CI probe report" -f body="$BODY" --jq '.number' || echo "ISSUE_CREATE_FAILED"
