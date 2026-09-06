@@ -116,8 +116,9 @@ class AccountRepositoryTest {
             purchaseDate = today,
         )
 
+        // Items come back newest-first, so select by name rather than position.
         val detail = repository.observeAccountDetail(id).first()!!
-        repository.deleteItem(id, detail.items.first().id)
+        repository.deleteItem(id, detail.items.first { it.name == "ক" }.id)
 
         assertEquals(Money.ofTaka(250), repository.getAccount(id)!!.total)
     }

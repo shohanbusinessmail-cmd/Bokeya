@@ -55,11 +55,18 @@ jobs:
         run: |
           if ls app/build/reports/tests/testDebugUnitTest/index.html >/dev/null 2>&1; then
             echo "--- unit test failures ---" >> /tmp/report.txt
+            # Pair each failure with the test that produced it. The XML puts
+            # <failure> inside its <testcase>, but both can span lines, so
+            # flatten first and then match the pair.
             find app/build/test-results -name "*.xml" -exec grep -l "<failure\|<error" {} \; 2>/dev/null | head -20 \
               | while read f; do
-                  echo "== $f" >> /tmp/report.txt
-                  grep -o 'testcase name="[^"]*"' "$f" | head -5 >> /tmp/report.txt
-                  sed -n 's/.*<failure[^>]*message="\([^"]*\)".*/  MSG: \1/p' "$f" | head -10 >> /tmp/report.txt
+                  echo "== $(basename "$f")" >> /tmp/report.txt
+                  tr '\n' ' ' < "$f" \
+                    | grep -o '<testcase name="[^"]*"[^>]*>[^<]*<\(failure\|error\)[^>]*message="[^"]*"' \
+                    | sed -e 's/<testcase name="/  FAILED: /' \
+                          -e 's/"[^>]*>[^<]*<\(failure\|error\)[^>]*message="/\n     -> /' \
+                          -e 's/"$//' \
+                    | head -40 >> /tmp/report.txt
                 done
           fi
           echo "done"
