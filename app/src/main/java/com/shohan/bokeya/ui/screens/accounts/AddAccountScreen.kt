@@ -1,5 +1,6 @@
 package com.shohan.bokeya.ui.screens.accounts
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -740,4 +741,4 @@ private fun PreviewRow(label: String, value: String, emphasise: Boolean = false)
 /** Chip rows can overflow on small screens; make them scroll instead of clipping. */
 @Composable
 private fun Modifier.horizontalScrollCompat(): Modifier =
-    this.then(androidx.compose.foundation.horizontalScroll(rememberScrollState()))
+    this.horizontalScroll(rememberScrollState())

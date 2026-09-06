@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -183,7 +184,7 @@ private fun FormContent(
             label = { it.label() },
             modifier = Modifier
                 .fillMaxWidth()
-                .then(androidx.compose.foundation.horizontalScroll(rememberScrollState())),
+                .horizontalScroll(rememberScrollState()),
         )
 
         FormSpacer(16)
