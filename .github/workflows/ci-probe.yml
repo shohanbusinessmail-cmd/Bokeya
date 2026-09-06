@@ -44,28 +44,24 @@ jobs:
         run: |
           find app/build/outputs/apk -name "*.apk" -printf "%f  %s bytes\n" 2>/dev/null || true
 
-      - name: Stage APKs for download
+      - name: Stage the release APK as Bokeya.apk
         if: always()
         run: |
           mkdir -p artifacts
-          # Give the downloadable files self-describing names instead of
-          # Gradle's generic app-debug.apk / app-release.apk.
-          V=$(grep -m1 'versionName' app/build.gradle.kts | sed -E 's/.*"(.*)".*/\1/')
-          S=$(git rev-parse --short HEAD)
-          for f in $(find app/build/outputs/apk -name "*.apk" 2>/dev/null); do
-            case "$f" in
-              *release*) cp "$f" "artifacts/bokeya-${V}-${S}-release.apk" ;;
-              *)         cp "$f" "artifacts/bokeya-${V}-${S}-debug.apk" ;;
-            esac
-          done
+          # One deliverable only. The release variant carries the real
+          # application id and is minified, so it is the build to install.
+          SRC=$(find app/build/outputs/apk/release -name "*.apk" 2>/dev/null | head -1)
+          if [ -n "$SRC" ]; then
+            cp "$SRC" artifacts/Bokeya.apk
+          fi
           ls -lh artifacts || true
 
-      - name: Upload APKs
+      - name: Upload Bokeya.apk
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bokeya-apk
-          path: artifacts/*.apk
+          name: Bokeya
+          path: artifacts/Bokeya.apk
           if-no-files-found: warn
           retention-days: 90
 
@@ -114,7 +110,7 @@ jobs:
             "${{ github.run_id }}" "${{ github.sha }}" "$(head -c 55000 /tmp/report.txt)")
           gh api repos/${{ github.repository }}/issues/1/comments -f body="$BODY" --jq '.id'
 
-      - name: Publish APKs to the rolling "latest-build" release
+      - name: Publish Bokeya.apk to the rolling "latest-build" release
         if: steps.build.outputs.exit == '0'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -122,15 +118,14 @@ jobs:
           # Best effort: a permissions-restricted token must not fail the build.
           set +e
           gh release delete latest-build --yes --cleanup-tag 2>/dev/null
-          gh release create latest-build artifacts/*.apk \
+          gh release create latest-build artifacts/Bokeya.apk \
             --title "Bokeya - latest build" \
             --prerelease \
-            --notes "Automatic build of \`${{ github.sha }}\` on branch \`${{ github.ref_name }}\`.
+            --notes "Install \`Bokeya.apk\`. Built from \`${{ github.sha }}\`.
 
-          - \`*-debug.apk\` - install this one for testing (debug build, includes sample data seeding).
-          - \`*-release.apk\` - minified R8 build, currently signed with the **debug** keystore, so it is for testing only and cannot be uploaded to Play.
+          Requires Android 7.0 or newer. Enable \"Install unknown apps\" for your browser or file manager first.
 
-          Enable \"Install unknown apps\" for your browser or file manager before installing."
+          Note: this build is signed with the debug keystore so CI can publish a runnable APK. Swap in a real upload key before releasing on Play."
           echo "release step exit=$?"
           exit 0
 

@@ -31,28 +31,21 @@ sync with, no subscription, and no ads.
 
 ## Download
 
-Every push to the build branch produces installable APKs. You do not need
-Android Studio to try the app.
+**[⬇ Download Bokeya.apk](https://github.com/shohanbusinessmail-cmd/Bokeya/releases/download/latest-build/Bokeya.apk)**
+— from the [latest-build release](https://github.com/shohanbusinessmail-cmd/Bokeya/releases/tag/latest-build),
+refreshed automatically on every green build.
 
-**Easiest — the rolling release:**
-[**github.com/shohanbusinessmail-cmd/Bokeya/releases/tag/latest-build**](https://github.com/shohanbusinessmail-cmd/Bokeya/releases/tag/latest-build)
+Copy it to your phone and open it. Android will ask you to allow "Install
+unknown apps" for whichever app you opened it from — that is expected for any
+APK installed outside the Play Store.
 
-Download `bokeya-<version>-<commit>-debug.apk`, copy it to your phone, and open
-it. Android will ask you to allow "Install unknown apps" for whichever app you
-opened it from — that is expected for any APK installed outside the Play Store.
+Requires **Android 7.0 (API 24)** or newer. The same file is also attached to
+each [Actions](https://github.com/shohanbusinessmail-cmd/Bokeya/actions) run as
+the **Bokeya** artifact, if you prefer downloading a specific commit.
 
-**Alternative — the CI artifact:** open the
-[Actions tab](https://github.com/shohanbusinessmail-cmd/Bokeya/actions), pick the
-newest green **Build check** run, and download the **bokeya-apk** ZIP from the
-*Artifacts* section at the bottom. Artifacts are kept for 90 days and require
-you to be signed in to GitHub.
-
-| File | Use it for |
-| --- | --- |
-| `…-debug.apk` | Everyday testing. Application id `com.shohan.bokeya.debug`, so it installs alongside a release copy, and it exposes the "নমুনা তথ্য" demo-data option in Settings. |
-| `…-release.apk` | Checking the minified R8 build. **Not publishable** — see the signing note under [Build & run](#build--run). |
-
-Minimum Android version: **7.0 (API 24)**.
+> The published APK is signed with the debug keystore so CI can produce a
+> runnable build. Replace it with a real upload key before distributing on the
+> Play Store — see [Build & run](#build--run).
 
 ---
 
