@@ -10,41 +10,33 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Version lists
+      - name: Compat matrix
         run: |
           set +e
           out=/tmp/v.txt; : > $out
-          list() { echo "### $1" >> $out; curl -s "$2" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -v -E 'alpha|beta|rc|RC|-M[0-9]|dev|SNAPSHOT' | tail -"${3:-8}" | tr '\n' ' ' >> $out; echo "" >> $out; }
           G=https://dl.google.com/dl/android/maven2
           M=https://repo1.maven.org/maven2
-          list "AGP" "$G/com/android/tools/build/gradle/maven-metadata.xml" 14
-          list "Kotlin" "$M/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml" 12
-          list "KSP" "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml" 14
-          list "compose-compiler-plugin" "$M/org/jetbrains/kotlin/compose-compiler-gradle-plugin/maven-metadata.xml" 8
-          list "work" "$G/androidx/work/work-runtime-ktx/maven-metadata.xml" 5
-          list "lifecycle" "$G/androidx/lifecycle/lifecycle-viewmodel-compose/maven-metadata.xml" 5
-          list "activity-compose" "$G/androidx/activity/activity-compose/maven-metadata.xml" 5
-          list "datastore" "$G/androidx/datastore/datastore-preferences/maven-metadata.xml" 5
-          list "navigation" "$G/androidx/navigation/navigation-compose/maven-metadata.xml" 5
-          list "room" "$G/androidx/room/room-runtime/maven-metadata.xml" 5
-          list "compose-bom" "$G/androidx/compose/compose-bom/maven-metadata.xml" 6
-          list "material3(direct)" "$G/androidx/compose/material3/material3/maven-metadata.xml" 6
-          list "biometric" "$G/androidx/biometric/biometric/maven-metadata.xml" 4
-          list "espresso-core" "$G/androidx/test/espresso/espresso-core/maven-metadata.xml" 4
-          list "androidx.test:runner" "$G/androidx/test/runner/maven-metadata.xml" 4
-          list "core-splashscreen" "$G/androidx/core/core-splashscreen/maven-metadata.xml" 4
-          list "mockk" "$M/io/mockk/mockk/maven-metadata.xml" 4
-          list "coroutines-test" "$M/org/jetbrains/kotlinx/kotlinx-coroutines-test/maven-metadata.xml" 4
-          list "serialization-json" "$M/org/jetbrains/kotlinx/kotlinx-serialization-json/maven-metadata.xml" 4
-          list "kotlinx-datetime" "$M/org/jetbrains/kotlinx/kotlinx-datetime/maven-metadata.xml" 4
-          list "vico-compose-m3" "$M/com/patrykandpatrick/vico/compose-m3/maven-metadata.xml" 4
-          echo "### AGP 9 alphas" >> $out
-          curl -s "$G/com/android/tools/build/gradle/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | tail -6 | tr '\n' ' ' >> $out
+          echo "### KSP versions matching 2.4 / 2.3.2x" >> $out
+          curl -s "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -E '^2\.(3|4)' | tr '\n' ' ' >> $out; echo "" >> $out
+          echo "### AGP 8.13.2 min gradle" >> $out
+          curl -s "$G/com/android/tools/build/gradle/8.13.2/gradle-8.13.2.pom" | head -30 >> $out
+          echo "### compose-bom 2026.08.00 -> material3 mapping" >> $out
+          curl -s "$G/androidx/compose/compose-bom/2026.08.00/compose-bom-2026.08.00.pom" | grep -A2 -E 'material3|compose-runtime|foundation' | head -30 >> $out
+          echo "### compose-bom stable list (all)" >> $out
+          curl -s "$G/androidx/compose/compose-bom/maven-metadata.xml" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep -v -E 'alpha|beta|rc' | tr '\n' ' ' >> $out; echo "" >> $out
+          echo "### room 2.8.4 exists?" >> $out
+          curl -s -o /dev/null -w "room-compiler-2.8.4:%{http_code}\n" "$G/androidx/room/room-compiler/2.8.4/room-compiler-2.8.4.pom" >> $out
+          echo "### kotlin 2.2.21 ksp pair" >> $out
+          curl -s -o /dev/null -w "ksp-2.2.21-2.0.5:%{http_code}\n" "$M/com/google/devtools/ksp/symbol-processing-gradle-plugin/2.2.21-2.0.5/symbol-processing-gradle-plugin-2.2.21-2.0.5.pom" >> $out
+          echo "### gradle dists available" >> $out
+          for gv in 8.13 8.14 8.14.3 9.0.0 9.1.0 9.7.1; do curl -s -o /dev/null -w "gradle-$gv:%{http_code} " "https://services.gradle.org/distributions/gradle-$gv-bin.zip" >> $out; done; echo "" >> $out
+          echo "### compose compiler plugin for kotlin versions" >> $out
+          for kv in 2.2.21 2.3.21 2.4.0 2.4.10; do curl -s -o /dev/null -w "ccp-$kv:%{http_code} " "$M/org/jetbrains/kotlin/compose-compiler-gradle-plugin/$kv/compose-compiler-gradle-plugin-$kv.pom" >> $out; done; echo "" >> $out
           cat $out
       - name: Report
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BODY=$(printf 'VERSIONS run %s\n```\n%s\n```' "${{ github.run_id }}" "$(cat /tmp/v.txt)")
+          BODY=$(printf 'COMPAT run %s\n```\n%s\n```' "${{ github.run_id }}" "$(head -c 60000 /tmp/v.txt)")
           gh api repos/${{ github.repository }}/issues/1/comments -f body="$BODY" --jq '.id'
