@@ -97,7 +97,7 @@ class DashboardEndToEndTest {
         // মোট বকেয়া = ৫,০১২, and the two buckets must add up to exactly that.
         summary().let {
             assertEquals(Money.ofTaka(5_012), it.totalDue)
-            assertEquals(Money.ofTaka(5_000), it.dueByType[AccountType.PERSONAL])
+            assertEquals(Money.ofTaka(5_000), it.dueByType[AccountType.PERSON])
             assertEquals(Money.ofTaka(12), it.dueByType[AccountType.SHOP])
             assertHeroMatchesBreakdown(it)
         }
@@ -105,7 +105,7 @@ class DashboardEndToEndTest {
         // Pay ২,০০০ towards the personal debt → ৩,০১২.
         accounts.recordPayment(personId, Money.ofTaka(2_000), today)
         summary().let {
-            assertEquals(Money.ofTaka(3_000), it.dueByType[AccountType.PERSONAL])
+            assertEquals(Money.ofTaka(3_000), it.dueByType[AccountType.PERSON])
             assertEquals(Money.ofTaka(12), it.dueByType[AccountType.SHOP])
             assertEquals(Money.ofTaka(3_012), it.totalDue)
             assertHeroMatchesBreakdown(it)
@@ -114,7 +114,7 @@ class DashboardEndToEndTest {
         // Clear the remaining ৩,০০০ → only the shop's ১২ is left.
         accounts.recordPayment(personId, Money.ofTaka(3_000), today)
         summary().let {
-            assertNull(it.dueByType[AccountType.PERSONAL])
+            assertNull(it.dueByType[AccountType.PERSON])
             assertEquals(Money.ofTaka(12), it.dueByType[AccountType.SHOP])
             assertEquals(Money.ofTaka(12), it.totalDue)
             assertHeroMatchesBreakdown(it)
@@ -145,7 +145,7 @@ class DashboardEndToEndTest {
         summary().let {
             assertEquals(Money.ofTaka(5_000), it.totalDue)
             assertEquals(Money.ofTaka(8_000), it.totalReceivable)
-            assertEquals(Money.ofTaka(5_000), it.dueByType[AccountType.PERSONAL])
+            assertEquals(Money.ofTaka(5_000), it.dueByType[AccountType.PERSON])
             assertHeroMatchesBreakdown(it)
         }
     }

@@ -69,10 +69,10 @@ class DashboardTotalsTest {
     @Test
     fun `personal debt only`() {
         val summary = summaryOf(
-            account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
         )
         assertEquals(taka(5_000), summary.totalDue)
-        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSONAL])
+        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSON])
     }
 
     @Test
@@ -93,11 +93,11 @@ class DashboardTotalsTest {
     fun `personal debt plus a small shop tab`() {
         // The exact case from the bug report: ৫,০০০ ধার + ১২ দোকান = ৫,০১২.
         val summary = summaryOf(
-            account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
             account(AccountType.SHOP, total = 12, paid = 0),
         )
         assertEquals(taka(5_012), summary.totalDue)
-        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSONAL])
+        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSON])
         assertEquals(taka(12), summary.dueByType[AccountType.SHOP])
         assertInvariant(summary)
     }
@@ -107,13 +107,13 @@ class DashboardTotalsTest {
         val summary = summaryOf(
             account(AccountType.SHOP, total = 1_200, paid = 0),
             account(AccountType.SHOP, total = 800, paid = 0),
-            account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
             account(AccountType.LOAN, total = 20_000, paid = 0),
             account(AccountType.EMI, total = 8_000, paid = 0),
         )
 
         assertEquals(taka(2_000), summary.dueByType[AccountType.SHOP])
-        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSONAL])
+        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSON])
         assertEquals(taka(20_000), summary.dueByType[AccountType.LOAN])
         assertEquals(taka(8_000), summary.dueByType[AccountType.EMI])
         assertEquals(taka(35_000), summary.totalDue)
@@ -126,7 +126,7 @@ class DashboardTotalsTest {
         var summary = summaryOf(
             account(AccountType.SHOP, total = 1_200, paid = 500),
             account(AccountType.SHOP, total = 800, paid = 0),
-            account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
             account(AccountType.LOAN, total = 20_000, paid = 0),
             account(AccountType.EMI, total = 8_000, paid = 0),
         )
@@ -138,20 +138,20 @@ class DashboardTotalsTest {
         summary = summaryOf(
             account(AccountType.SHOP, total = 1_200, paid = 500),
             account(AccountType.SHOP, total = 800, paid = 0),
-            account(AccountType.PERSONAL, total = 5_000, paid = 5_000, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 5_000, direction = DebtDirection.BORROWED),
             account(AccountType.LOAN, total = 20_000, paid = 0),
             account(AccountType.EMI, total = 8_000, paid = 0),
         )
         assertEquals(taka(29_500), summary.totalDue)
         // A settled account drops out of the breakdown rather than showing ০.
-        assertTrue(summary.dueByType[AccountType.PERSONAL] == null)
+        assertTrue(summary.dueByType[AccountType.PERSON] == null)
         assertInvariant(summary)
 
         // …then ১০,০০০ off the loan → ১৯,৫০০
         summary = summaryOf(
             account(AccountType.SHOP, total = 1_200, paid = 500),
             account(AccountType.SHOP, total = 800, paid = 0),
-            account(AccountType.PERSONAL, total = 5_000, paid = 5_000, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 5_000, direction = DebtDirection.BORROWED),
             account(AccountType.LOAN, total = 20_000, paid = 10_000),
             account(AccountType.EMI, total = 8_000, paid = 0),
         )
@@ -179,17 +179,17 @@ class DashboardTotalsTest {
     fun `money owed to the user never touches the payable total`() {
         val summary = summaryOf(
             account(AccountType.SHOP, total = 1_000, paid = 0),
-            account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+            account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
             account(AccountType.LOAN, total = 20_000, paid = 0),
             account(AccountType.EMI, total = 10_000, paid = 0),
             // Rahim owes the user ৮,০০০ — receivable, not payable.
-            account(AccountType.PERSONAL, total = 8_000, paid = 0, direction = DebtDirection.LENT),
+            account(AccountType.PERSON, total = 8_000, paid = 0, direction = DebtDirection.LENT),
         )
 
         assertEquals(taka(36_000), summary.totalDue)
         assertEquals(taka(8_000), summary.totalReceivable)
         // The receivable must not have inflated the ধার bucket either.
-        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSONAL])
+        assertEquals(taka(5_000), summary.dueByType[AccountType.PERSON])
         assertInvariant(summary)
     }
 
@@ -287,14 +287,14 @@ class DashboardTotalsTest {
             emptyList(),
             listOf(account(AccountType.SHOP, total = 12, paid = 0)),
             listOf(
-                account(AccountType.PERSONAL, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
+                account(AccountType.PERSON, total = 5_000, paid = 0, direction = DebtDirection.BORROWED),
                 account(AccountType.SHOP, total = 12, paid = 0),
             ),
             listOf(
                 account(AccountType.SHOP, total = 1_200, paid = 500),
                 account(AccountType.SHOP, total = 800, paid = 800),
-                account(AccountType.PERSONAL, total = 5_000, paid = 2_000, direction = DebtDirection.BORROWED),
-                account(AccountType.PERSONAL, total = 8_000, paid = 0, direction = DebtDirection.LENT),
+                account(AccountType.PERSON, total = 5_000, paid = 2_000, direction = DebtDirection.BORROWED),
+                account(AccountType.PERSON, total = 8_000, paid = 0, direction = DebtDirection.LENT),
                 account(AccountType.LOAN, total = 20_000, paid = 19_999),
                 account(AccountType.EMI, total = 8_000, paid = 0, closed = true),
                 account(AccountType.EMI, total = 1_00_00_000, paid = 0),
