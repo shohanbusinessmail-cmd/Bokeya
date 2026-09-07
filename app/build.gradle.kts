@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -21,7 +22,6 @@ android {
         vectorDrawables { useSupportLibrary = true }
 
         ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
             arg("room.incremental", "true")
             arg("room.generateKotlin", "true")
         }
@@ -91,6 +91,13 @@ android {
         checkReleaseBuilds = false
         warningsAsErrors = false
     }
+}
+
+// The Room Gradle plugin gives every variant its own schema directory. Sharing
+// one path across variants makes the parallel kspDebug/kspRelease tasks write
+// the same file at once, which intermittently corrupts it mid-read.
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
