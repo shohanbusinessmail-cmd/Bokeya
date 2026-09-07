@@ -288,11 +288,10 @@ fun LedgerRow(
 
         Spacer(Modifier.width(8.dp))
 
-        Text(
+        AutoSizeText(
             text = sign + MoneyFormatter.format(entry.amount, useBengaliDigits),
             style = MaterialTheme.typography.titleSmall,
             color = color,
-            maxLines = 1,
         )
     }
 }

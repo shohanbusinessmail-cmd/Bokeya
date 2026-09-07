@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -198,11 +199,11 @@ fun DonutChart(
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
+            AutoSizeText(
                 text = centerValue,
+                modifier = Modifier.padding(horizontal = 30.dp),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
             )
             Text(
                 text = centerLabel,

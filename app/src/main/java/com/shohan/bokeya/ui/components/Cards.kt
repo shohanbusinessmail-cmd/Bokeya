@@ -115,7 +115,6 @@ fun StatTile(
     accent: Color = MaterialTheme.colorScheme.primary,
     useBengaliDigits: Boolean = true,
     onClick: (() -> Unit)? = null,
-    compactAmount: Boolean = false,
 ) {
     BokeyaCard(modifier = modifier, onClick = onClick, contentPadding = 14.dp) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -145,7 +144,6 @@ fun StatTile(
             style = AmountTypography.small,
             color = MaterialTheme.colorScheme.onSurface,
             useBengaliDigits = useBengaliDigits,
-            compact = compactAmount,
         )
     }
 }

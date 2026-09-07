@@ -56,6 +56,7 @@ import com.shohan.bokeya.domain.model.AccountType
 import com.shohan.bokeya.domain.model.DebtItem
 import com.shohan.bokeya.domain.model.Installment
 import com.shohan.bokeya.ui.components.AmountText
+import com.shohan.bokeya.ui.components.AutoSizeText
 import com.shohan.bokeya.ui.components.BokeyaCard
 import com.shohan.bokeya.ui.components.BokeyaTopBar
 import com.shohan.bokeya.ui.components.EmptyState
@@ -389,12 +390,11 @@ private fun MiniStat(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.height(2.dp))
-        Text(
+        // Monetary value: scale to fit rather than ellipsise.
+        AutoSizeText(
             text = value,
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
     }
 }

@@ -285,7 +285,6 @@ private fun SummaryColumn(
             style = AmountTypography.small,
             color = color,
             useBengaliDigits = bengali,
-            compact = true,
         )
     }
 }

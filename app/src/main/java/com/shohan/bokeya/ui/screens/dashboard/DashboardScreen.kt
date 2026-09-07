@@ -394,7 +394,6 @@ private fun HeroStat(
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
             useBengaliDigits = bengali,
-            compact = true,
         )
     }
 }
@@ -457,7 +456,7 @@ private fun DebtBreakdownCard(state: DashboardUiState, modifier: Modifier = Modi
             DonutChart(
                 slices = slices,
                 centerLabel = stringResource(R.string.label_total),
-                centerValue = MoneyFormatter.formatCompact(
+                centerValue = MoneyFormatter.format(
                     state.summary.totalDue,
                     state.settings.useBengaliDigits,
                 ),
@@ -489,7 +488,6 @@ private fun DebtBreakdownCard(state: DashboardUiState, modifier: Modifier = Modi
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurface,
                             useBengaliDigits = state.settings.useBengaliDigits,
-                            compact = true,
                         )
                     }
                 }

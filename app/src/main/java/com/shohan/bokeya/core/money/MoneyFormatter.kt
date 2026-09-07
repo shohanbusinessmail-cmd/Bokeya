@@ -8,6 +8,10 @@ import kotlin.math.abs
  * Bangladesh uses the **lakh/crore** grouping (12,34,567) rather than the
  * western thousands grouping (1,234,567), so this is implemented directly
  * instead of relying on [java.text.NumberFormat].
+ *
+ * There is deliberately no compact/abbreviated form ("৫ হাজার", "1.2M").
+ * Monetary values are always rendered in full; when space is tight the UI
+ * scales the type down via `AmountText` rather than shortening the number.
  */
 object MoneyFormatter {
 
@@ -46,40 +50,6 @@ object MoneyFormatter {
                 append(' ')
             }
             append(localised)
-        }
-    }
-
-    /** Compact form for dense surfaces: ১২.৫ হাজার, ১.২ লাখ, ৩.৪ কোটি. */
-    fun formatCompact(money: Money, useBengaliDigits: Boolean = true, withSymbol: Boolean = true): String {
-        val negative = money.minor < 0
-        val taka = abs(money.minor) / 100
-
-        val (value, suffix) = when {
-            taka >= 10_000_000L -> taka / 10_000_000.0 to "কোটি"
-            taka >= 100_000L -> taka / 100_000.0 to "লাখ"
-            taka >= 1_000L -> taka / 1_000.0 to "হাজার"
-            else -> taka.toDouble() to ""
-        }
-
-        val text = if (suffix.isEmpty()) {
-            taka.toString()
-        } else {
-            val rounded = (value * 10).toLong() / 10.0
-            if (rounded % 1.0 == 0.0) "${rounded.toLong()}" else String.format("%.1f", rounded)
-        }
-
-        val localised = if (useBengaliDigits) toBengaliDigits(text) else text
-        return buildString {
-            if (negative) append('-')
-            if (withSymbol) {
-                append(SYMBOL)
-                append(' ')
-            }
-            append(localised)
-            if (suffix.isNotEmpty()) {
-                append(' ')
-                append(suffix)
-            }
         }
     }
 

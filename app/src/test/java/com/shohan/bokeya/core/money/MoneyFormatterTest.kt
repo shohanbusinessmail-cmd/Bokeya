@@ -1,6 +1,7 @@
 package com.shohan.bokeya.core.money
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -74,12 +75,30 @@ class MoneyFormatterTest {
     }
 
     @Test
-    fun `compact form uses bengali magnitudes`() {
-        assertTrue(MoneyFormatter.formatCompact(Money.ofTaka(12_500)).contains("হাজার"))
-        assertTrue(MoneyFormatter.formatCompact(Money.ofTaka(150_000)).contains("লাখ"))
-        assertTrue(MoneyFormatter.formatCompact(Money.ofTaka(34_000_000)).contains("কোটি"))
-        // Small amounts are shown as-is, with no magnitude word.
-        assertEquals("৳ ৯৫০", MoneyFormatter.formatCompact(Money.ofTaka(950)))
+    fun `amounts are never abbreviated or truncated`() {
+        // Every magnitude renders in full lakh-crore grouping. There is no
+        // compact form: no "১২.৫ হাজার", no "1.2M", no trailing ellipsis.
+        assertEquals("৳ ৫০০", MoneyFormatter.format(Money.ofTaka(500)))
+        assertEquals("৳ ৫,০০০", MoneyFormatter.format(Money.ofTaka(5_000)))
+        assertEquals("৳ ২৫,০০০", MoneyFormatter.format(Money.ofTaka(25_000)))
+        assertEquals("৳ ১,২৫,০০০", MoneyFormatter.format(Money.ofTaka(125_000)))
+        assertEquals("৳ ১২,৫০,০০০", MoneyFormatter.format(Money.ofTaka(1_250_000)))
+        assertEquals("৳ ১,০০,০০,০০০", MoneyFormatter.format(Money.ofTaka(10_000_000)))
+    }
+
+    @Test
+    fun `no formatted amount contains an ellipsis or magnitude word`() {
+        val magnitudes = listOf("হাজার", "লাখ", "কোটি", "K", "M", "B")
+        listOf(500L, 5_000L, 25_000L, 125_000L, 1_250_000L, 10_000_000L, 999_999_999L)
+            .forEach { taka ->
+                listOf(true, false).forEach { bengali ->
+                    val text = MoneyFormatter.format(Money.ofTaka(taka), useBengaliDigits = bengali)
+                    assertFalse(text, text.contains("…"))
+                    assertFalse(text, text.contains("..."))
+                    assertFalse(text, text.contains("•"))
+                    magnitudes.forEach { word -> assertFalse("$text / $word", text.contains(word)) }
+                }
+            }
     }
 
     @Test
